@@ -2,7 +2,7 @@ pipeline {
     agent any
 	environment {
 		dockerImage =''
-		registry = "fabien123/react-app" 
+		registry = "fabien123/jenkins_project" 
 	        registryCredential = 'dockerhub' 
 			
 	}

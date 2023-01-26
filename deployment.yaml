@@ -13,8 +13,8 @@ spec:
         app: react-app
     spec:
       containers:
-        - name: react-app
-          image: fabien123/react-app:latest
+        - name: jenkins_project
+          image: fabien123/jenkins_project:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
