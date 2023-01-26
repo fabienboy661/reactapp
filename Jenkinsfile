@@ -12,23 +12,29 @@ pipeline {
                 checkout scm
             }
         }
-        stage("Build image") {
-            steps {
-                script {
-                    myapp = docker.build("fabien123/react-app:${env.BUILD_ID}")
-                }
-            }
-        }
-        stage("Push image") {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                            myapp.push("latest")
-                            myapp.push("${env.BUILD_ID}")
-                    }
-                }
-            }
-        }
+
+        stage('Build Docker Image') {
+		    steps {
+			    sh 'whoami'
+			    script {
+				    myimage = docker.build("fabien123/react-app:${env.BUILD_ID}")
+			    }
+		    }
+	    }
+
+	    stage("Push Docker Image") {
+		    steps {
+			    script {
+				    echo "Push Docker Image"
+				    withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+            				sh "docker login -u fabien123 -p ${dockerhub}"
+				    }
+				        myimage.push("${env.BUILD_ID}")
+				    
+			    }
+		    }
+	    }
+
         stage('Deploy to GKE') {
             steps{
                 sh "sed -i 's/react-app:latest/react-app:${env.BUILD_ID}/g' deployment.yaml"
